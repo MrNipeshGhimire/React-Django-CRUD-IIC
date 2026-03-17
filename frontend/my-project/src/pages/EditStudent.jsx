@@ -26,7 +26,7 @@ const EditStudent = () => {
       <div className="w-full max-w-xl bg-white shadow-lg rounded-2xl p-8">
         
         <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
-          Add Student
+          Edit Student
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-5">
