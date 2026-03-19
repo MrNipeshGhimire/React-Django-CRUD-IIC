@@ -15,7 +15,11 @@ SECRET_KEY = "django-insecure-+ip27@(k*3-z@alex2l!!$&6ii5+b1ugp!tuu$6gen=ugejv!!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
+
+CORS_ALLOW_ALL_ORIGINS = True
+
+
 
 
 # Application definition
@@ -28,7 +32,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     'myapp',
-    'rest_framework'
+    'rest_framework',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
@@ -39,6 +44,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "corsheaders.middleware.CorsMiddleware"   # added for implementing cors middleware
 ]
 
 ROOT_URLCONF = "crud_project.urls"
