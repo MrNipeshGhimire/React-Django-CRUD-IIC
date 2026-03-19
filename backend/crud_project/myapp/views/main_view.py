@@ -7,7 +7,7 @@ from ..serializers import StudentSerializer
 # POST ,GET
 @api_view(['POST','GET'])
 def student_view(request):
-    
+
     if request.method == 'POST':
         serializer = StudentSerializer(data=request.data)
         if serializer.is_valid():
@@ -41,7 +41,7 @@ def student_view_detail(request, id):
         serializer = StudentSerializer(student, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({"msg":"Student data updated"})
+            return Response({"msg":"Student data updated","updated_data":serializer.data})
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
