@@ -1,6 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { useNavigate, useParams } from "react-router-dom";
 
 const EditStudent = () => {
+  const { id } = useParams(); // get ID from URL
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     name: "",
     roll: "",
@@ -9,6 +14,27 @@ const EditStudent = () => {
     phone: "",
   });
 
+  // 🔹 Fetch student data by ID
+  const fetchStudent = async () => {
+    try {
+      const response = await axios.get(
+        `http://127.0.0.1:8000/api/student/${id}/`
+      );
+
+      if (response.status === 200) {
+        setFormData(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching student:", error);
+    }
+  };
+
+  // Load data on mount
+  useEffect(() => {
+    fetchStudent();
+  }, [id]);
+
+  // Handle input change
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -16,9 +42,24 @@ const EditStudent = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  // 🔹 Update student
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+
+    try {
+      const response = await axios.put(
+        `http://127.0.0.1:8000/api/student/${id}/`,
+        formData
+      );
+
+      if (response.status === 200) {
+        alert("Student updated successfully ✅");
+        navigate("/"); // go back to list
+      }
+    } catch (error) {
+      console.error("Update failed:", error);
+      alert("Failed to update ❌");
+    }
   };
 
   return (
@@ -31,94 +72,63 @@ const EditStudent = () => {
 
         <form onSubmit={handleSubmit} className="space-y-5">
 
-          {/* Student Name */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Student Name
-            </label>
-            <input
-              type="text"
-              name="name"
-              placeholder="Enter student name"
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              required
-            />
-          </div>
+          <input
+            type="text"
+            name="name"
+            placeholder="Student Name"
+            value={formData.name}
+            onChange={handleChange}
+            className="w-full border px-4 py-2 rounded-lg"
+            required
+          />
 
-          {/* Roll */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Roll Number
-            </label>
-            <input
-              type="text"
-              name="roll"
-              placeholder="Enter roll number"
-              value={formData.roll}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              required
-            />
-          </div>
+          <input
+            type="text"
+            name="roll"
+            placeholder="Roll Number"
+            value={formData.roll}
+            onChange={handleChange}
+            className="w-full border px-4 py-2 rounded-lg"
+            required
+          />
 
-          {/* Faculty */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Faculty
-            </label>
-            <select
-              name="faculty"
-              value={formData.faculty}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              required
-            >
-              <option value="">Select Faculty</option>
-              <option value="Science">Science</option>
-              <option value="Management">Management</option>
-              <option value="Humanities">Humanities</option>
-              <option value="Education">Education</option>
-            </select>
-          </div>
+          <select
+            name="faculty"
+            value={formData.faculty}
+            onChange={handleChange}
+            className="w-full border px-4 py-2 rounded-lg"
+            required
+          >
+            <option value="">Select Faculty</option>
+            <option value="Science">Science</option>
+            <option value="Management">Management</option>
+            <option value="Humanities">Humanities</option>
+            <option value="Education">Education</option>
+          </select>
 
-          {/* Address */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Address
-            </label>
-            <input
-              type="text"
-              name="address"
-              placeholder="Enter address"
-              value={formData.address}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              required
-            />
-          </div>
+          <input
+            type="text"
+            name="address"
+            placeholder="Address"
+            value={formData.address}
+            onChange={handleChange}
+            className="w-full border px-4 py-2 rounded-lg"
+            required
+          />
 
-          {/* Phone */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Phone Number
-            </label>
-            <input
-              type="tel"
-              name="phone"
-              placeholder="Enter phone number"
-              value={formData.phone}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              required
-            />
-          </div>
+          <input
+            type="tel"
+            name="phone"
+            placeholder="Phone"
+            value={formData.phone}
+            onChange={handleChange}
+            className="w-full border px-4 py-2 rounded-lg"
+            required
+          />
 
-          {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white font-semibold py-2.5 rounded-lg hover:bg-blue-700 transition duration-300"
+            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
           >
             Update Student
           </button>

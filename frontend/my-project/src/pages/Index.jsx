@@ -1,37 +1,47 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const Index = () => {
-  const [students, setStudents] = useState([
-    {
-      id: 1,
-      name: "Ram Sharma",
-      roll: "101",
-      faculty: "Science",
-      address: "Kathmandu",
-      phone: "9800000001",
-    },
-    {
-      id: 2,
-      name: "Sita Karki",
-      roll: "102",
-      faculty: "Management",
-      address: "Pokhara",
-      phone: "9800000002",
-    },
-  ]);
+  const [students, setStudents] = useState([]);
 
-  // Delete Handler
-  const handleDelete = (id) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete?");
-    if (confirmDelete) {
-      setStudents(students.filter((s) => s.id !== id));
+  // Fetch Students
+  const FetchStudent = async () => {
+    try {
+      const response = await axios.get(
+        "http://127.0.0.1:8000/api/student/"
+      );
+      if (response.status === 200) {
+        setStudents(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching students:", error);
     }
   };
 
-  // Edit Handler (for now just logs)
-  const handleEdit = (student) => {
-    console.log("Edit:", student);
+  // Run on page load
+  useEffect(() => {
+    FetchStudent();
+  }, []);
+
+  // Delete Handler (with backend)
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete?"
+    );
+
+    if (confirmDelete) {
+      try {
+        await axios.delete(
+          `http://127.0.0.1:8000/api/student/${id}/`
+        );
+
+        // Update UI
+        setStudents(students.filter((s) => s.id !== id));
+      } catch (error) {
+        console.error("Delete failed:", error);
+      }
+    }
   };
 
   return (
@@ -44,7 +54,10 @@ const Index = () => {
             Student List
           </h2>
 
-          <Link to={"/add"} className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+          <Link
+            to={"/add"}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+          >
             + Add Student
           </Link>
         </div>
@@ -89,12 +102,11 @@ const Index = () => {
                     <div className="flex justify-center gap-2">
 
                       {/* Edit Button */}
-                      <Link to={"/edit"}><button
-                        
-                        className="px-3 py-1 text-sm bg-yellow-400 text-white rounded-lg hover:bg-yellow-500 transition"
-                      >
-                        Edit
-                      </button></Link>
+                      <Link to={`/edit/${student.id}`}>
+                        <button className="px-3 py-1 text-sm bg-yellow-400 text-white rounded-lg hover:bg-yellow-500 transition">
+                          Edit
+                        </button>
+                      </Link>
 
                       {/* Delete Button */}
                       <button
